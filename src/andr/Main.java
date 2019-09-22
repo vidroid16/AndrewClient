@@ -116,7 +116,7 @@ public class Main {
             login = scanner.nextLine();
             password = scanner.nextLine();
             if (login.matches("[A-Z0-9._%+-]+@[A-Z0-9-]+.+.[A-Z]{2,4}") && password.matches("/[A-Za-z0-9]/")) break;
-            System.out.println("некорректно введены данные для входа");
+            System.out.println("Некорректно введены данные для входа");
         }
         String data = login.concat(" " + password);
         return new MyPackage(200, 0, data.getBytes());
@@ -129,7 +129,7 @@ public class Main {
             if(login.matches("[A-Z0-9._%+-]+@[A-Z0-9-]+.+.[A-Z]{2,4}")) break;
             System.out.println("Некорректно введена почта");
         }
-        return new MyPackage(200, 0, login.getBytes());
+        return new MyPackage(201, 0, login.getBytes());
     }
     public static class ProgramPauser{
         public static void pause(String message){
