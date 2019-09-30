@@ -1,11 +1,13 @@
 package andr;
 
+import andr.DataBaseWorks.DBConst;
+import andr.DataBaseWorks.iQuery;
 import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.util.Objects;
 
-public class Photo implements Serializable {
+public class Photo implements Serializable, iQuery {
     private boolean isColored;
     private int height;
     private int width;
@@ -80,5 +82,16 @@ public class Photo implements Serializable {
         jsonObject.put("width", width);
         jsonObject.put("link", link);
         return jsonObject;
+    }
+
+    @Override
+    public String getInsertSqlQuery() {
+        return String.format("INSERT INTO %s VALUES(%s, %s, %s, %s, '%s')",
+                DBConst.PHOTO_TABLE, "DEFAULT", isColored(), getWidth(), getHeight(), getLink());
+    }
+
+    @Override
+    public String getDelSqlQuery() {
+        return String.format("DELETE FROM %s WHERE id=%s", DBConst.PHOTO_TABLE, "DEFAULT");
     }
 }

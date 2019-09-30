@@ -1,12 +1,14 @@
 package andr;
 
+import andr.DataBaseWorks.DBConst;
+import andr.DataBaseWorks.iQuery;
 import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
 
-class BirthDate implements Serializable {
+class BirthDate implements Serializable, iQuery {
     private int day;
     private String month;
     private int year;
@@ -72,5 +74,14 @@ class BirthDate implements Serializable {
         return jsonObject;
     }
 
+    @Override
+    public String getInsertSqlQuery() {
+        return String.format("INSERT INTO %s VALUES (%s, %s, %s, '%s');", DBConst.BIRTHDATE_TABLE, "DEFAULT", getDay(), getYear(), getMonth());
+    }
+
+    @Override
+    public String getDelSqlQuery() {
+        return String.format("DELETE FROM %s WHERE id=DEFAULT", DBConst.BIRTHDATE_TABLE);
+    }
 }
 

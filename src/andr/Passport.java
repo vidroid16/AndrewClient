@@ -1,17 +1,22 @@
 package andr;
 
+import andr.DataBaseWorks.DBConst;
+import andr.DataBaseWorks.iQuery;
 import org.json.JSONObject;
 
 import java.io.Serializable;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.Objects;
 
-public class Passport implements Comparable<Passport>, Serializable {
+public class Passport implements Comparable<Passport>, Serializable, iQuery {
     private String name;
     private String sername;
     private String patronymic;
     private Photo photo;
     private BirthDate birthDate;
     private int ID;
+    private ZonedDateTime time;
 
     public Passport(String name, String sername, String patronymic, Photo photo){
         this.name = name;
@@ -19,6 +24,7 @@ public class Passport implements Comparable<Passport>, Serializable {
         this.patronymic = patronymic;
         this.photo = photo;
         this.birthDate = new BirthDate();
+        this.time = ZonedDateTime.now();
         ID = (int)(Math.random() * 321);
     }
     public Passport(JSONObject obj){
@@ -27,9 +33,9 @@ public class Passport implements Comparable<Passport>, Serializable {
         patronymic = obj.getString("patronymic");
         photo = new Photo((JSONObject) obj.get("photo"));
         birthDate = new BirthDate((JSONObject) obj.get("birthDate"));
+        this.time = ZonedDateTime.now();
         ID = obj.getInt("ID");
     }
-
 
     public String getName() {
         return name;
@@ -57,6 +63,10 @@ public class Passport implements Comparable<Passport>, Serializable {
 
     public String getSername() {
         return sername;
+    }
+
+    public ZonedDateTime getTime() {
+        return time;
     }
 
     @Override
@@ -115,5 +125,34 @@ public class Passport implements Comparable<Passport>, Serializable {
         }else{
             return patronymic.compareTo(o.patronymic);
         }
+    }
+
+    @Override
+    public String getInsertSqlQuery() {
+        return String.format("INSERT INTO %s VALUES (%s, '%s', '%s', '%s', '%s', '%s');",
+                DBConst.PASSPORT_TABLE, "DEFAULT", getName(), getSername(), getPatronymic(), getTime().toString(), "USER");
+    }
+
+    public ArrayList<String> getInsertSqlQueries() {
+        ArrayList<String> queries = new ArrayList<>();
+        queries.add(getInsertSqlQuery());
+        queries.add(getBirthDate().getInsertSqlQuery());
+        queries.add(getPhoto().getInsertSqlQuery());
+        return queries;
+    }
+
+    public ArrayList<String> getDelSqlQueries() {
+        ArrayList<String> queries = new ArrayList<>();
+        queries.add(getDelSqlQuery());
+        queries.add(getBirthDate().getDelSqlQuery());
+        queries.add(getPhoto().getDelSqlQuery());
+        return queries;
+    }
+
+
+
+    @Override
+    public String getDelSqlQuery() {
+        return String.format("DELETE FROM %s WHERE id = DEFAULT", DBConst.PASSPORT_TABLE, getID());
     }
 }
